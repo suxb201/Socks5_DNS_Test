@@ -1,23 +1,34 @@
-PORT = 10009
-DNS = [
-    '1.2.4.8',  # 中国互联网络中心
-    '114.114.114.114',  # 114
-    '119.29.29.29',  # DNSPod
-    '223.5.5.5',  # 阿里云
-    '223.6.6.6',  # 阿里云
-    '180.76.76.76',  # 百度
-    '1.1.1.1',  # Cloudflare
-    '8.8.8.8',  # Google
-    '8.8.4.4',  # Google
-    '218.201.96.130',  # 山东青岛移动
-    '192.168.254.245',  # 山大青岛首选
-    '192.168.254.141',  # 山大济南首选
-]
+import logging
+import os
+import signal
+import sys
 
-# 1. dns 解析
-# 2. 解析出列表进行 ping
-# 3. 按 ping 排序
-# 4. 记住 ip 是哪个 dns 解析出来的
+import asyncdns
+import eventloop
+import udprelay
+
+
+def main():
+    loop = eventloop.EventLoop()
+    dns_resolver = asyncdns.DNSResolver(loop)
+    # tcp_server = tcprelay.TCPRelay(dns_resolver, loop)
+    udp_server = udprelay.UDPRelay(dns_resolver, loop)
+
+    def handler(signum, _):
+        logging.warning('received SIGQUIT, doing graceful shutting down..')
+        # tcp_server.close(next_tick=True)
+        udp_server.close()
+
+    signal.signal(getattr(signal, 'SIGQUIT', signal.SIGTERM), handler)
+
+    def int_handler(signum, _):
+        sys.exit(1)
+
+    signal.signal(signal.SIGINT, int_handler)
+
+    loop.run()
+
 
 if __name__ == '__main__':
-    print("running...")
+    print(os.path.dirname(__file__))
+    main()

@@ -1,19 +1,17 @@
 # async dns
 
-from enum import Enum, unique
-
 import os
 import re
 import socket
 import struct
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum, unique
 from typing import Dict, Callable, Set, List
 
 import ping3
 
 import eventloop
-
 from config import config
 
 VALID_HOSTNAME = re.compile(r"(?!-)[A-Z\d\-_]{1,63}(?<!-)$", re.IGNORECASE)
@@ -125,7 +123,7 @@ class DNSPackage:
 
 
 def is_valid_hostname(hostname):
-    if len(hostname) > 255:
+    if len(hostname) > 255 or len(hostname) == 0:
         return False
     if hostname[-1] == '.':
         hostname = hostname[:-1]
@@ -247,19 +245,19 @@ class DNSResolver(object):
             for k, item in self._hosts.items():
                 if item.ip:
                     f.write(f"{item.ip:<15} {k:<23} # {item.ip_to_latency[item.ip]:>6}ms, {item.ip_to_nameserver[item.ip]}\n")
-        print("hosts saved!")
+        # print("hosts saved!")
 
-        def make_callback():  # 返回一个 callback
-
-            def callback(result, error):
-                pass
-                # print(result, error)
-
-            a_callback = callback
-            return a_callback
-
-        hostname = input("input hostname: ")
-        self.resolve(hostname, make_callback())
+        # def make_callback():  # 返回一个 callback
+        #
+        #     def callback(result, error):
+        #         pass
+        #         # print(result, error)
+        #
+        #     a_callback = callback
+        #     return a_callback
+        #
+        # hostname = input("input hostname: ")
+        # self.resolve(hostname, make_callback())
 
     def _send_req(self, nameserver, hostname):
         req_id = os.urandom(2)  # 无符号 2 个字节 = 16bit
