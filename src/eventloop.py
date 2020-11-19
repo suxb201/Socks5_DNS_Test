@@ -27,8 +27,16 @@ import errno
 import logging
 from collections import defaultdict
 
-__all__ = ['EventLoop', 'POLL_NULL', 'POLL_IN', 'POLL_OUT', 'POLL_ERR',
-           'POLL_HUP', 'POLL_NVAL', 'EVENT_NAMES']
+__all__ = [
+    'EventLoop',
+    'POLL_NULL',
+    'POLL_IN',
+    'POLL_OUT',
+    'POLL_ERR',
+    'POLL_HUP',
+    'POLL_NVAL',
+    'EVENT_NAMES'
+]
 
 POLL_NULL = 0x00
 POLL_IN = 0x01
@@ -139,18 +147,16 @@ class EventLoop(object):
         if hasattr(select, 'epoll'):
             self._impl = select.epoll()
             model = 'epoll'
-            print(f"model epoll")
         elif hasattr(select, 'kqueue'):
             self._impl = KqueueLoop()
             model = 'kqueue'
-            print(f"model kqueue")
         elif hasattr(select, 'select'):
             self._impl = SelectLoop()
             model = 'select'
-            print(f"model select")
         else:
             raise Exception('can not find any available functions in select package')
-        self._fdmap = {}  # (f, handler)
+        print(f"using event model: {model}")
+        self._fdmap = {}  # fd -> handler
         self._last_time = time.time()
         self._periodic_callbacks = []
         self._stopping = False

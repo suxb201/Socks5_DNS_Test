@@ -245,6 +245,7 @@ class DNSResolver(object):
             for k, item in self._hosts.items():
                 if item.ip:
                     f.write(f"{item.ip:<15} {k:<23} # {item.ip_to_latency[item.ip]:>6}ms, {item.ip_to_nameserver[item.ip]}\n")
+
         # print("hosts saved!")
 
         # def make_callback():  # 返回一个 callback
