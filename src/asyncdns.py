@@ -245,19 +245,20 @@ class DNSResolver(object):
             for k, item in self._hosts.items():
                 if item.ip:
                     f.write(f"{item.ip:<15} {k:<23} # {item.ip_to_latency[item.ip]:>6}ms, {item.ip_to_nameserver[item.ip]}\n")
+
         # print("hosts saved!")
 
-        # def make_callback():  # 返回一个 callback
-        #
-        #     def callback(result, error):
-        #         pass
-        #         # print(result, error)
-        #
-        #     a_callback = callback
-        #     return a_callback
-        #
-        # hostname = input("input hostname: ")
-        # self.resolve(hostname, make_callback())
+        def make_callback():  # 返回一个 callback
+
+            def callback(result, error):
+                pass
+                # print(result, error)
+
+            a_callback = callback
+            return a_callback
+
+        hostname = input("input hostname: ")
+        self.resolve(hostname, make_callback())
 
     def _send_req(self, nameserver, hostname):
         req_id = os.urandom(2)  # 无符号 2 个字节 = 16bit
